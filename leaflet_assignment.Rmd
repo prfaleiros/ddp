@@ -17,9 +17,10 @@ The map contains points from the historic Route 66 from Chicago to St. Louis.
 ```{r }
 
 # Route 66
+# https://scontent-dfw5-1.xx.fbcdn.net/v/t1.0-9/10352292_10153002657827662_1249389169669655994_n.jpg?_nc_cat=103&_nc_ht=scontent-dfw5-1.xx&oh=857c27c2290cf9e219d57ad268c4d815&oe=5CC7E127
 
 route_icon <- makeIcon(
-	iconUrl = "https://scontent-dfw5-1.xx.fbcdn.net/v/t1.0-9/10352292_10153002657827662_1249389169669655994_n.jpg?_nc_cat=103&_nc_ht=scontent-dfw5-1.xx&oh=857c27c2290cf9e219d57ad268c4d815&oe=5CC7E127",
+	iconUrl = "https://github.com/prfaleiros/ddp/blob/gh-pages/icon.png",
 	iconWidth = 31, iconHeight = 31,
 	iconAnchorX = 16, iconAnchorY = 16)
 
@@ -28,7 +29,7 @@ df <- read.csv("coords.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
 df %>%
 	leaflet() %>%
 	addTiles() %>%
-	addMarkers(icon = route_icon)
+	addMarkers(clusterOptions = markerClusterOptions(), icon = route_icon)
 
 
 ```
