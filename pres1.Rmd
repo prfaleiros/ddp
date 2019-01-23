@@ -29,7 +29,7 @@ summary(cars)
 
 ## Slide with Plot
 
-```{r pressure, fig.align="center"}
-plot(pressure)
+```{r iris, fig.align="center"}
+hist(iris$Sepal.Length)
 ```
 
