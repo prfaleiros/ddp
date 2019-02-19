@@ -1,0 +1,35 @@
+---
+title: "Developing Data Products - Week 2 Assignment"
+author: "Paulo Faleiros"
+date: "January 23, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(leaflet)
+```
+
+This assignment is about creating an HTML page with a Leaflet map.
+
+The map contains the Illinois portion of the historic Route 66, from Chicago to the bridge over the Mississippi River, in Saint Louis, MO.
+
+```{r }
+
+# Route 66
+# https://scontent-dfw5-1.xx.fbcdn.net/v/t1.0-9/10352292_10153002657827662_1249389169669655994_n.jpg?_nc_cat=103&_nc_ht=scontent-dfw5-1.xx&oh=857c27c2290cf9e219d57ad268c4d815&oe=5CC7E127
+
+route_icon <- makeIcon(
+	iconUrl = "https://scontent-dfw5-1.xx.fbcdn.net/v/t1.0-9/10352292_10153002657827662_1249389169669655994_n.jpg?_nc_cat=103&_nc_ht=scontent-dfw5-1.xx&oh=857c27c2290cf9e219d57ad268c4d815&oe=5CC7E127",
+	iconWidth = 31, iconHeight = 31,
+	iconAnchorX = 16, iconAnchorY = 16)
+
+df <- read.csv("coords.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
+
+df %>%
+	leaflet() %>%
+	addTiles() %>%
+	addMarkers(clusterOptions = markerClusterOptions(), icon = route_icon)
+
+
+```
