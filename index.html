@@ -42,18 +42,12 @@
     <!-- SLIDES -->
     <slide class="class" id="id" style="background:;">
   <hgroup>
-    <h2>First Slide</h2>
+    <h2>Context</h2>
   </hgroup>
   <article data-timings="">
     <h1></h1>
 
-<p>For more details on authoring R presentations please visit <a href="https://support.rstudio.com/hc/en-us/articles/200486468">https://support.rstudio.com/hc/en-us/articles/200486468</a>.</p>
-
-<ul>
-<li>Bullet 1</li>
-<li>Bullet 2</li>
-<li>Bullet n</li>
-</ul>
+<p>The application in  <a href="https://prfaleiros.shinyapps.io/ddpwk4/">https://prfaleiros.shinyapps.io/ddpwk4/</a> is a simple Shiny app based on Air Quality data (Daily air quality measurements in New York, May to September 1973) that uses a prediction model to fill the gaps in the observations to predicts the Ozone level based on the other measured variables.</p>
 
   </article>
   <!-- Presenter Notes -->
@@ -61,21 +55,25 @@
 
 <slide class="class" id="id" style="background:;">
   <hgroup>
-    <h2>Slide With Code</h2>
+    <h2>Preparing the data</h2>
   </hgroup>
   <article data-timings="">
     <h1></h1>
 
-<pre><code class="r">summary(cars)
+<p>As the observations contain some &quot;NA&quot;s, the idea was to remove this noisy data from the model.</p>
+
+<pre><code class="r">    validation &lt;- airquality[is.na(airquality$Ozone) | is.na(airquality$Solar.R),]
+    df &lt;- airquality[!is.na(airquality$Ozone) &amp; !is.na(airquality$Solar.R),]
+    sum(is.na(validation))
 </code></pre>
 
-<pre><code>##      speed           dist       
-##  Min.   : 4.0   Min.   :  2.00  
-##  1st Qu.:12.0   1st Qu.: 26.00  
-##  Median :15.0   Median : 36.00  
-##  Mean   :15.4   Mean   : 42.98  
-##  3rd Qu.:19.0   3rd Qu.: 56.00  
-##  Max.   :25.0   Max.   :120.00
+<pre><code>## [1] 44
+</code></pre>
+
+<pre><code class="r">    sum(is.na(df))
+</code></pre>
+
+<pre><code>## [1] 0
 </code></pre>
 
   </article>
@@ -84,12 +82,43 @@
 
 <slide class="" id="slide-3" style="background:;">
   <hgroup>
-    <h2>Slide With Plot</h2>
+    <h2>Training the model</h2>
   </hgroup>
   <article data-timings="">
     <h1></h1>
 
-<p><img src="assets/fig/unnamed-chunk-2-1.png" alt="plot of chunk unnamed-chunk-2"></p>
+<p>Using the clean dataset to train and test a linear regression model, it is now possible to fulfill the data gaps in the Ozone column, applying the prediction model in validation dataset. </p>
+
+<pre><code class="r">    set.seed(1999)
+    inTrain&lt;-createDataPartition(y=df$Ozone, p=0.75, list=FALSE);
+    training&lt;- df[inTrain,];
+    testing&lt;-df[-inTrain,];
+
+    modelFit=train(Ozone ~ Solar.R + Wind + Temp, data=training, method=&quot;glm&quot;)
+
+    predictions&lt;- predict(modelFit,newdata=testing)
+
+    val&lt;- predict(modelFit,newdata=validation)
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-4" style="background:;">
+  <hgroup>
+    <h2>Presenting the results (example)</h2>
+  </hgroup>
+  <article data-timings="">
+    <h1></h1>
+
+<h5>Plot with observed values</h5>
+
+<p><img src="assets/fig/unnamed-chunk-4-1.png" alt="Plot with observed values"></p>
+
+<h5>Plot with added predicted values</h5>
+
+<p><img src="assets/fig/unnamed-chunk-5-1.png" alt="Plot with added predicted values"></p>
 
   </article>
   <!-- Presenter Notes -->
@@ -101,20 +130,26 @@
     <ul>
       <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=1 title='First Slide'>
+        data-slide=1 title='Context'>
          1
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=2 title='Slide With Code'>
+        data-slide=2 title='Preparing the data'>
          2
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=3 title='Slide With Plot'>
+        data-slide=3 title='Training the model'>
          3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='Presenting the results (example)'>
+         4
       </a>
     </li>
   </ul>

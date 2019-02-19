@@ -7,29 +7,74 @@ highlighter : highlight.js  # {highlight.js, prettify, highlight}
 hitheme     : tomorrow      # 
 widgets     : []			# mathjax, quiz, bootstrap
 mode        : selfcontained # {standalone, draft}
---- .class #id
 
-## First Slide
-========================================================
-
-For more details on authoring R presentations please visit <https://support.rstudio.com/hc/en-us/articles/200486468>.
-
-- Bullet 1
-- Bullet 2
-- Bullet n
 
 --- .class #id
-## Slide With Code
+
+```{r echo=F, message=F, eval=T}
+library(datasets)
+library(ggplot2)
+library(caret)
+```
+
+## Context
 ========================================================
+
+The application in  <https://prfaleiros.shinyapps.io/ddpwk4/> is a simple Shiny app based on Air Quality data (Daily air quality measurements in New York, May to September 1973) that uses a prediction model to fill the gaps in the observations to predicts the Ozone level based on the other measured variables.
+
+--- .class #id
+## Preparing the data
+========================================================
+
+As the observations contain some "NA"s, the idea was to remove this noisy data from the model.
 
 ```{r}
-summary(cars)
+	validation <- airquality[is.na(airquality$Ozone) | is.na(airquality$Solar.R),]
+	df <- airquality[!is.na(airquality$Ozone) & !is.na(airquality$Solar.R),]
+	sum(is.na(validation))
+	sum(is.na(df))
 ```
 
 ---
-## Slide With Plot
+## Training the model
 ========================================================
 
-```{r, echo=FALSE}
-plot(faithful)
+Using the clean dataset to train and test a linear regression model, it is now possible to fulfill the data gaps in the Ozone column, applying the prediction model in validation dataset. 
+
+```{r}
+	set.seed(1999)
+	inTrain<-createDataPartition(y=df$Ozone, p=0.75, list=FALSE);
+	training<- df[inTrain,];
+	testing<-df[-inTrain,];
+	
+	modelFit=train(Ozone ~ Solar.R + Wind + Temp, data=training, method="glm")
+	
+	predictions<- predict(modelFit,newdata=testing)
+	
+	val<- predict(modelFit,newdata=validation)
+
+```
+
+--- 
+## Presenting the results (example)
+========================================================
+
+##### Plot with observed values
+
+```{r echo=F, message=F, warning=F, fig.cap="Plot with observed values", fig.width=10, fig.height=3}
+			g1 <- ggplot(airquality, aes(x=Solar.R, y=Ozone)) + 
+				ylim(-25, 175) +
+				geom_point(col="darkblue")
+			
+			g1
+```
+
+##### Plot with added predicted values
+
+```{r echo=F, message=F, warning=F, fig.cap="Plot with added predicted values", fig.width=10, fig.height=3}
+			g1 <- g1 + geom_point(data = airquality[as.numeric(names(val)),], 
+			  aes(x=airquality$Solar.R[as.numeric(names(val))], y = val),
+									  col="green")
+
+			g1
 ```

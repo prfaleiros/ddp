@@ -25,7 +25,7 @@ shinyServer(function(input, output) {
 	training<- df[inTrain,];
 	testing<-df[-inTrain,];
 	
-	modelFit=train(Ozone ~., data=training, method="glm")
+	modelFit=train(Ozone ~ Solar.R + Wind + Temp, data=training, method="glm")
 	
 	predictions<- predict(modelFit,newdata=testing)
 	
@@ -60,7 +60,7 @@ shinyServer(function(input, output) {
 			if (input$checkbox == TRUE) {
 				g3 <- g3 + geom_point(data = airquality[as.numeric(names(val)),], 
 									  aes(x=airquality$Temp[as.numeric(names(val))], y = val),
-									  col = "blue")
+									  col = "gold")
 			}
 			g3
 		}
